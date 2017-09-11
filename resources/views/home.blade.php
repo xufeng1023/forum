@@ -10,7 +10,7 @@
         <nav>
           <ul class="nav nav-pills float-right">
             <li class="nav-item">
-              <a class="nav-link active" href="/">广告</a>
+              <a class="nav-link active" href="/advertising">广告</a>
             </li>
             @if(Auth::check())
             <li class="nav-item">
