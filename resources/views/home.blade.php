@@ -28,21 +28,21 @@
       <div class="jumbotron">
         <p><a class="btn btn-lg btn-success" href="#" role="button">Ad your business today</a></p>  
       </div>
-      @foreach($posts->chunk(2) as $chunks)
+      @foreach($blogs->chunk(2) as $chunks)
           <div class="row">
-              @foreach($chunks as $post)
+              @foreach($chunks as $blog)
                 <div class="col-lg-6">
-                  <h4>{{ $post->title }}</h4>
+                  <h4>{{ $blog->title }}</h4>
                   <p>
-                    {{ str_limit($post->body, 100) }}
-                    <a href="/post/{{ $post->slug }}"><small>更多</small></a>
+                    {{ str_limit($blog->body, 100) }}
+                    <a href="/blog/{{ $blog->title }}"><small>更多</small></a>
                   </p>
                 </div>
             @endforeach
           </div>
       @endforeach
       <br>
-      {{ $posts->links('vendor.pagination.bootstrap-4') }}
+      {{ $blogs->links('vendor.pagination.bootstrap-4') }}
 
       @include('footer')
 

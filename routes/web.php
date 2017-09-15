@@ -2,10 +2,10 @@
 
 Auth::routes();
 
-Route::get('/', 'PostController@index');
-Route::post('/post', 'PostController@store');
-Route::get('/post/new', 'PostController@new');
-Route::get('/post/{post}', 'PostController@show');
+Route::get('/', 'BlogController@index');
+Route::post('/post', 'BlogController@store');
+Route::get('/post/new', 'BlogController@new');
+Route::get('/blog/{blog}', 'BlogController@show');
 Route::get('/advertising', 'AdController@new');
 
 Route::post('/subscribe', 'PaymentController@subscribe');

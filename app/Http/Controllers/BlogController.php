@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Post;
+use App\Blog;
 use Illuminate\Http\Request;
 
-class PostController extends Controller
+class BlogController extends Controller
 {
 	public function __construct()
 	{
@@ -14,14 +14,14 @@ class PostController extends Controller
 
 	public function index()
 	{
-		$posts = Post::paginate(8);
+		$blogs = Blog::paginate(8);
 
-		return view('home', compact('posts'));
+		return view('home', compact('blogs'));
 	}
 
-    public function show(Post $post)
+    public function show(Blog $blog)
     {
-    	return view('post', compact('post'));
+    	return view('blog', compact('blog'));
     }
 
     public function new()
@@ -31,7 +31,7 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-    	Post::create($request->all());
+    	Blog::create($request->all());
 
     	return redirect('/');
     }

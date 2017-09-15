@@ -22,10 +22,10 @@
         <div class="col-sm-8 blog-main">
 
           <div class="blog-post">
-            <h2 class="blog-post-title">{{ $post->title }}</h2>
-            <p class="blog-post-meta">发布于: {{ $post->created_at }}</p>
+            <h2 class="blog-post-title">{{ $blog->title }}</h2>
+            <p class="blog-post-meta">发布于: {{ $blog->created_at }}</p>
 
-            <p>{{ $post->body }}</p>
+            <p>{{ $blog->body }}</p>
           </div>
         </div>
 
