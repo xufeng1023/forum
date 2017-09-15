@@ -12,7 +12,7 @@
 
       <div class="row marketing">
         <div class="col-sm-12">
-          <form action="/post" method="POST">
+          <form action="/subscribe" method="POST">
           {{ csrf_field() }}
             <div class="form-group">
               <label>Image title</label>
