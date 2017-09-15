@@ -15,19 +15,23 @@ class PaymentController extends Controller
 
     public function subscribe(Request $request, User $user)
     {
+    	//$user = User::findOrFail(3);
     	$user = User::first();
 
-    	$stripeToken = $this->token();
-
-		$user->newSubscription('main', 'main')
-		->trialDays(10)
-		->create($stripeToken->id);
+    	try {
+    		$stripeToken = $this->token();
+    		$user->newSubscription('main', 'main')
+				->trialDays(7)
+				->create($stripeToken->id);
+    	} catch(\Exception $e) {
+    		exit($e->getMessage());
+    	}
     }
 
     private function token()
 	{
 		return Token::create([
-			  	"card" => [
+		  	"card" => [
 			    "number" => "4000000000000077",
 			    "exp_month" => 9,
 			    "exp_year" => 2018,
