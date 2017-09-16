@@ -28,6 +28,19 @@ class PaymentController extends Controller
     	}
     }
 
+    public function upgrade()
+    {
+    	$user = User::first();
+
+		$user->subscription('main')->swap('second');
+    }
+
+    public function cancel()
+    {	// todo: when user cancels, hide card info remove.
+    	$user = User::first();
+    	$user->subscription('main')->cancel();
+    }
+
     private function token()
 	{
 		return Token::create([

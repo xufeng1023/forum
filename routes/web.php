@@ -9,3 +9,5 @@ Route::get('/blog/{blog}', 'BlogController@show');
 Route::get('/advertising', 'AdController@new');
 
 Route::post('/subscribe', 'PaymentController@subscribe');
+Route::post('/upgrade', 'PaymentController@upgrade');
+Route::post('/cancel', 'PaymentController@cancel');
