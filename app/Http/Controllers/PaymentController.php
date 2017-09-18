@@ -15,8 +15,9 @@ class PaymentController extends Controller
 
     public function subscribe(Request $request, User $user)
     {
-    	//$user = User::findOrFail(3);
-    	$user = User::first();
+    	if($user->api_token != $request->apiToken) {
+            return response([], 401);
+        }
 
     	try {
     		$stripeToken = $this->token();
@@ -26,6 +27,8 @@ class PaymentController extends Controller
     	} catch(\Exception $e) {
     		exit($e->getMessage());
     	}
+
+        return response(['You are now a subscriber.'], 200);
     }
 
     public function upgrade()

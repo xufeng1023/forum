@@ -7,7 +7,3 @@ Route::post('/post', 'BlogController@store');
 Route::get('/post/new', 'BlogController@new');
 Route::get('/blog/{blog}', 'BlogController@show');
 Route::get('/advertising', 'AdController@new');
-
-Route::post('/subscribe', 'PaymentController@subscribe');
-Route::post('/upgrade', 'PaymentController@upgrade');
-Route::post('/cancel', 'PaymentController@cancel');

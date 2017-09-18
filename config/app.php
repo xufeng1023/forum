@@ -168,6 +168,7 @@ return [
          * Package Service Providers...
          */
         Laravel\Cashier\CashierServiceProvider::class,
+        Barryvdh\Cors\ServiceProvider::class,
         /*
          * Application Service Providers...
          */
