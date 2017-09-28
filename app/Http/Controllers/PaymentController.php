@@ -15,20 +15,17 @@ class PaymentController extends Controller
 
     public function subscribe(Request $request, User $user)
     {
-    	if($user->api_token != $request->apiToken) {
-            return response([], 401);
-        }
+    	$this->checkToken($request, $user);
 
     	try {
     		$stripeToken = $this->token();
-    		$user->newSubscription('main', 'main')
-				->trialDays(7)
+    		$user->newSubscription('main', 'monthly')
 				->create($stripeToken->id);
     	} catch(\Exception $e) {
-    		exit($e->getMessage());
+            return $e->getMessage();
     	}
 
-        return response(['You are now a subscriber.'], 200);
+        return response('You are now a subscriber.', 200);
     }
 
     public function upgrade()
@@ -44,15 +41,36 @@ class PaymentController extends Controller
     	$user->subscription('main')->cancel();
     }
 
-    private function token()
+    public function updateCard(Request $request, User $user)
+    {
+        $this->checkToken($request, $user);
+
+        try {
+            $token = $this->token($request);
+            $user->updateCard($token->id);
+        } catch(\Exception $e) {
+            return $e->getMessage();
+        }
+
+        return response('Your credit card has been updated!', 200);
+    }
+
+    private function token($request)
 	{
-		return Token::create([
-		  	"card" => [
-			    "number" => "4000000000000077",
-			    "exp_month" => 9,
-			    "exp_year" => 2018,
-			    "cvc" => "314"
-		  	]
-		]);
+        return Token::create([
+            "card" => [
+                "number" => $request->number,
+                "exp_month" => $request->month,
+                "exp_year" => $request->year,
+                "cvc" => $request->cvc
+            ]
+        ]);
 	}
+
+    private function checkToken($request, $user)
+    {
+        if($user->api_token != $request->apiToken) {
+            return response('Token mismatch!', 401);
+        }
+    }
 }
