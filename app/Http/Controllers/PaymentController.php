@@ -22,7 +22,7 @@ class PaymentController extends Controller
     		$user->newSubscription('main', 'monthly')
 				->create($stripeToken->id);
     	} catch(\Exception $e) {
-            return $e->getMessage();
+            return response($e->getMessage(), 422);
     	}
 
         return response('You are now a subscriber.', 200);
@@ -35,10 +35,17 @@ class PaymentController extends Controller
 		$user->subscription('main')->swap('second');
     }
 
-    public function cancel()
-    {	// todo: when user cancels, hide card info remove.
-    	$user = User::first();
-    	$user->subscription('main')->cancel();
+    public function cancel(Request $request, User $user)
+    {	// todo: when user in trial, hide cancel button.
+        $this->checkToken($request, $user);
+
+        try {
+            $user->subscription('main')->cancel();
+        } catch(\Exception $e) {
+            return response($e->getMessage(), 422);
+        }
+
+        return response('Your subscription has been canceled!', 200);
     }
 
     public function updateCard(Request $request, User $user)
@@ -49,7 +56,7 @@ class PaymentController extends Controller
             $token = $this->token($request);
             $user->updateCard($token->id);
         } catch(\Exception $e) {
-            return $e->getMessage();
+            return response($e->getMessage(), 422);
         }
 
         return response('Your credit card has been updated!', 200);
