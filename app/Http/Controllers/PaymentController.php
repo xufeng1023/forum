@@ -68,7 +68,7 @@ class PaymentController extends Controller
         return response('Your credit card has been updated!', 200);
     }
 
-    private function token($request)
+    public function token(Request $request)
 	{
         return Token::create([
             "card" => [
