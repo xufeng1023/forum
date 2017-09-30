@@ -28,11 +28,17 @@ class PaymentController extends Controller
         return response('You are now a subscriber.', 200);
     }
 
-    public function upgrade()
+    public function changePlan(Request $request, User $user)
     {
-    	$user = User::first();
+    	$this->checkToken($request, $user);
 
-		$user->subscription('main')->swap('second');
+        try {
+            $user->subscription('main')->swap($request->plan);
+        } catch(\Exception $e) {
+            return response($e->getMessage(), 422);
+        }
+		
+        return response('Your plan has been changed!', 200);
     }
 
     public function cancel(Request $request, User $user)
