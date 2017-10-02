@@ -1,6 +1,6 @@
 <?php
 
-Auth::routes();
+//Auth::routes();
 
 Route::get('/', 'BlogController@index');
 Route::post('/post', 'BlogController@store');

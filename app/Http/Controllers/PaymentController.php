@@ -8,19 +8,22 @@ use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-	public function __construct()
+    private $request;
+
+	public function __construct(Request $request)
 	{
+        $this->request = $request;
 		Stripe::setApiKey(config('services.stripe.secret'));
 	}
 
-    public function subscribe(Request $request, User $user)
+    public function subscribe(User $user)
     {
-    	$this->checkToken($request, $user);
+    	$this->checkToken($user);
 
     	try {
-    		$stripeToken = $this->token();
-    		$user->newSubscription('main', 'monthly')
-				->create($stripeToken->id);
+    		$token = $this->token();
+    		$user->newSubscription('main', $this->request->plan)
+				->create($token->id);
     	} catch(\Exception $e) {
             return response($e->getMessage(), 422);
     	}
@@ -28,12 +31,12 @@ class PaymentController extends Controller
         return response('You are now a subscriber.', 200);
     }
 
-    public function changePlan(Request $request, User $user)
+    public function changePlan(User $user)
     {
-    	$this->checkToken($request, $user);
+    	$this->checkToken($user);
 
         try {
-            $user->subscription('main')->swap($request->plan);
+            $user->subscription('main')->swap($this->request->plan);
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
         }
@@ -41,9 +44,18 @@ class PaymentController extends Controller
         return response('Your plan has been changed!', 200);
     }
 
-    public function cancel(Request $request, User $user)
+    public function resume(User $user)
+    {
+        $this->checkToken($user);
+        
+        if ($user->subscription('main')->onGracePeriod()) {
+            $user->subscription('main')->resume();
+        }
+    }
+
+    public function cancel(User $user)
     {	// todo: when user in trial, hide cancel button.
-        $this->checkToken($request, $user);
+        $this->checkToken($user);
 
         try {
             $user->subscription('main')->cancel();
@@ -54,12 +66,12 @@ class PaymentController extends Controller
         return response('Your subscription has been canceled!', 200);
     }
 
-    public function updateCard(Request $request, User $user)
+    public function updateCard(User $user)
     {
-        $this->checkToken($request, $user);
+        $this->checkToken($user);
 
         try {
-            $token = $this->token($request);
+            $token = $this->token();
             $user->updateCard($token->id);
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
@@ -68,21 +80,32 @@ class PaymentController extends Controller
         return response('Your credit card has been updated!', 200);
     }
 
-    public function token(Request $request)
+    public function getToken()
+    {
+        try {
+            $token = $this->token();
+        } catch(\Exception $e) {
+            return response($e->getMessage(), 422);
+        }
+
+        return $token->id;
+    }
+
+    private function token()
 	{
         return Token::create([
             "card" => [
-                "number" => $request->number,
-                "exp_month" => $request->month,
-                "exp_year" => $request->year,
-                "cvc" => $request->cvc
+                "number" => $this->request->number,
+                "exp_month" => $this->request->month,
+                "exp_year" => $this->request->year,
+                "cvc" => $this->request->cvc
             ]
         ]);
 	}
 
-    private function checkToken($request, $user)
+    private function checkToken($user)
     {
-        if($user->api_token != $request->apiToken) {
+        if($user->api_token != $this->request->apiToken) {
             return response('Token mismatch!', 401);
         }
     }
