@@ -25,7 +25,7 @@ class PaymentController extends Controller
     		$user->newSubscription('main', $this->request->plan)
 				->create($token->id);
     	} catch(\Exception $e) {
-            return response($e->getMessage(), 422);
+            return response($user->id, 422);
     	}
 
         return response('You are now a subscriber.', 200);
@@ -82,10 +82,12 @@ class PaymentController extends Controller
 
     public function getToken()
     {
+        if(!$this->request->has('plan')) return response(['plan' => 'Choose a plan!'], 422);
+
         try {
             $token = $this->token();
         } catch(\Exception $e) {
-            return response($e->getMessage(), 422);
+            return response(['card' => $e->getMessage()], 422);
         }
 
         return $token->id;
@@ -106,7 +108,7 @@ class PaymentController extends Controller
     private function checkToken($user)
     {
         if($user->api_token != $this->request->apiToken) {
-            return response('Token mismatch!', 401);
+            return response(['token' => 'Token mismatch!'], 401);
         }
     }
 }
