@@ -80,9 +80,9 @@ class PaymentController extends Controller
         return response('Your credit card has been updated!', 200);
     }
 
-    public function getToken()
+    public function getToken(Request $request)
     {
-        if(!$this->request->has('plan')) return response(['plan' => 'Choose a plan!'], 422);
+        if($msg = $this->isBadPlan($request)) return response(['plan' => $msg], 422);
 
         try {
             $token = $this->token();
@@ -110,5 +110,12 @@ class PaymentController extends Controller
         if($user->api_token != $this->request->apiToken) {
             return response(['token' => 'Token mismatch!'], 401);
         }
+    }
+
+    private function isBadPlan($request)
+    {
+        if(!$request->has('plan')) return 'Choose a plan!';
+
+        if($request->plan != 'Daily' && $request->plan != 'Monthly') return 'Plan doesn\'t exist!';
     }
 }
