@@ -10,7 +10,7 @@
       <div class="container">
         <nav class="nav">
           <a class="nav-link" href="/">主页</a>
-          <a class="nav-link" href="/advertising">广告</a>
+          <a class="nav-link" href="#">广告</a>
         </nav>
       </div>
     </div>

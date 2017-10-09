@@ -10,7 +10,7 @@
         <nav>
           <ul class="nav nav-pills float-right">
             <li class="nav-item">
-              <a class="nav-link active" href="/advertising">广告</a>
+              <a class="nav-link active" href="#">广告</a>
             </li>
             @if(Auth::check())
             <li class="nav-item">
@@ -26,7 +26,7 @@
       </div>
 
       <div class="jumbotron">
-        <p><a class="btn btn-lg btn-success" href="#" role="button">Ad your business today</a></p>  
+        <p><a class="btn btn-lg btn-success" href="#" role="button">Ad your business here</a></p>  
       </div>
       @foreach($blogs->chunk(2) as $chunks)
           <div class="row">
