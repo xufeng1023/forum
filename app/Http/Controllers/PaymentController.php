@@ -49,8 +49,15 @@ class PaymentController extends Controller
         $this->checkToken($user);
         
         if ($user->subscription('main')->onGracePeriod()) {
-            $user->subscription('main')->resume();
+            try {
+                $user->subscription('main')->resume();
+            } catch(\Exception $e) {
+                return response($e->getMessage(), 422);
+            }
+            return response('You are now subscribed!', 200);
         }
+
+        return response('Your subscription has ended, it can\'t be resumed!', 422);
     }
 
     public function cancel(User $user)
