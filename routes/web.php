@@ -7,3 +7,9 @@ Route::post('/post', 'BlogController@store');
 Route::get('/post/new', 'BlogController@new');
 Route::get('/blog/{blog}', 'BlogController@show');
 //Route::get('/advertising', 'AdController@new');
+
+Route::post('stripe/success', 'WebhookController@handleInvoicePaymentSucceeded');
+Route::post(
+    'stripe/webhook',
+    '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
+);
