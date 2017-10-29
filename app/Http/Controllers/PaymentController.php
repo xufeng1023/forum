@@ -61,7 +61,7 @@ class PaymentController extends Controller
     }
 
     public function cancel(User $user)
-    {	// todo: when user in trial, hide cancel button.
+    {	
         $this->checkToken($user);
 
         try {
