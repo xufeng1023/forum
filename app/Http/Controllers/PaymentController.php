@@ -87,6 +87,38 @@ class PaymentController extends Controller
         return response('Your credit card has been updated!', 200);
     }
 
+    public function invoices(User $user)
+    {
+        $this->checkToken($user);
+
+        try {
+            $invoices = $user->invoices();
+            foreach($invoices as $key => $invoice) {
+                $json[$key]['date'] = $invoice->date()->toFormattedDateString();
+                $json[$key]['total'] = $invoice->total();
+                $json[$key]['id'] = $invoice->id;
+            }
+        } catch(\Exception $e) {
+            return response($e->getMessage(), 422);
+        }
+
+        return $json ?: '';
+    }
+
+    public function invoice(User $user)
+    {
+        $this->checkToken($user);
+
+        try {
+            return $user->downloadInvoice($this->request->invoiceId, [
+                'vendor'  => 'Your Company',
+                'product' => 'Your Product',
+            ]);
+        } catch(\Exception $e) {
+            return response($e->getMessage(), 422);
+        }
+    }
+
     public function getToken(Request $request)
     {
         if($msg = $this->isBadPlan($request)) return response(['plan' => $msg], 422);

@@ -10,6 +10,6 @@ Route::get('/blog/{blog}', 'BlogController@show');
 
 Route::post('stripe/success', 'WebhookController@handleInvoicePaymentSucceeded');
 Route::post(
-    'stripe/webhook',
+    'stripe/failed',
     '\Laravel\Cashier\Http\Controllers\WebhookController@handleWebhook'
 );
