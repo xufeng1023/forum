@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\User;
-use Stripe\{Stripe,Token};
+use Stripe\{Stripe,Token,Subscription};
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
@@ -27,6 +27,20 @@ class PaymentController extends Controller
     	} catch(\Exception $e) {
             return response($user->id, 422);
     	}
+
+        return response('You are now a subscriber.', 200);
+    }
+
+    public function resubscribe(User $user)
+    {
+        $this->checkToken($user);
+
+        try {
+            $user->newSubscription('main', $this->request->plan)
+                ->create(null);
+        } catch(\Exception $e) {
+            return response($user->id, 422);
+        }
 
         return response('You are now a subscriber.', 200);
     }
@@ -111,8 +125,8 @@ class PaymentController extends Controller
 
         try {
             return $user->downloadInvoice($this->request->invoiceId, [
-                'vendor'  => 'Your Company',
-                'product' => 'Your Product',
+                'vendor'  => 'DollyIsland',
+                'product' => 'Membership',
             ]);
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
