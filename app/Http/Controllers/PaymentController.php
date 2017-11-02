@@ -21,26 +21,15 @@ class PaymentController extends Controller
     	$this->checkToken($user);
 
     	try {
-    		$token = $this->token();
-    		$user->newSubscription('main', $this->request->plan)
-				->create($token->id);
+            if($this->request->plan == 'ppv') {
+                $user->createAsStripeCustomer($this->request->payKey);
+            } else {
+                $token = $user->stripe_id? null : $this->request->payKey;
+        		$user->newSubscription('main', $this->request->plan)->create($token);
+            }
     	} catch(\Exception $e) {
             return response($user->id, 422);
     	}
-
-        return response('You are now a subscriber.', 200);
-    }
-
-    public function resubscribe(User $user)
-    {
-        $this->checkToken($user);
-
-        try {
-            $user->newSubscription('main', $this->request->plan)
-                ->create(null);
-        } catch(\Exception $e) {
-            return response($user->id, 422);
-        }
 
         return response('You are now a subscriber.', 200);
     }
@@ -116,7 +105,7 @@ class PaymentController extends Controller
             return response($e->getMessage(), 422);
         }
 
-        return $json ?: '';
+        return isset($json)? $json : '';
     }
 
     public function invoice(User $user)
@@ -169,6 +158,6 @@ class PaymentController extends Controller
     {
         if(!$request->has('plan')) return 'Choose a plan!';
 
-        if($request->plan != 'Daily' && $request->plan != 'Monthly') return 'Plan doesn\'t exist!';
+        if($request->plan != 'ppv' && $request->plan != 'monthly') return 'Plan doesn\'t exist!';
     }
 }
