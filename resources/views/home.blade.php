@@ -26,13 +26,13 @@
       </div>
 
       <div class="jumbotron">
-        <p><a class="btn btn-lg btn-success" href="#" role="button">Ad your business here</a></p>  
+        <iframe src="//rcm-na.amazon-adsystem.com/e/cm?o=1&p=12&l=ur1&category=hmjewelry2016&banner=10V9Y46HA62YCVDW4Y02&f=ifr&linkID=5153815c013fc2c387d04a91d0e1b794&t=nanafo1985-20&tracking_id=nanafo1985-20" width="300" height="250" scrolling="no" border="0" marginwidth="0" style="border:none;" frameborder="0"></iframe>  
       </div>
       @foreach($blogs->chunk(2) as $chunks)
           <div class="row">
               @foreach($chunks as $blog)
                 <div class="col-lg-6">
-                  <h4>{{ $blog->title }}</h4>
+                  <a href="/blog/{{ $blog->title }}"><h4>{{ $blog->title }}</h4></a>
                   <p>
                     {{ str_limit($blog->body, 100) }}
                     <a href="/blog/{{ $blog->title }}"><small>更多</small></a>
