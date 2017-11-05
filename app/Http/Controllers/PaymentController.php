@@ -34,6 +34,19 @@ class PaymentController extends Controller
         return response('You are now a subscriber.', 200);
     }
 
+    public function ppv(User $user)
+    {
+        $this->checkToken($user);
+
+        try {
+            $user->invoiceFor('One Time Charge', 149);
+        } catch(\Exception $e) {
+            return response($user->id, 422);
+        }
+
+        return response('You are now a subscriber.', 200);
+    }
+
     public function changePlan(User $user)
     {
     	$this->checkToken($user);
