@@ -31,7 +31,7 @@ class PaymentController extends Controller
             return response($user->id, 422);
     	}
 
-        return response('You are now a subscriber.', 200);
+        return response('/settings/invoices', 200);
     }
 
     public function ppv(User $user)
@@ -70,7 +70,7 @@ class PaymentController extends Controller
             } catch(\Exception $e) {
                 return response($e->getMessage(), 422);
             }
-            return response('You are now subscribed!', 200);
+            return response('/settings/invoices', 200);
         }
 
         return response('Your subscription has ended, it can\'t be resumed!', 422);
