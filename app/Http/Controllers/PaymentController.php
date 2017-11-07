@@ -13,24 +13,30 @@ class PaymentController extends Controller
 	public function __construct(Request $request)
 	{
         $this->request = $request;
-        $this->middleware('auth:api')->except('getToken');
+        $this->middleware('auth:api');
 		Stripe::setApiKey(config('services.stripe.secret'));
 	}
 
     public function subscribe()
     {
         try {
+            if(auth()->user()->stripe_id) $token = null;
+            else $token = $this->token()->id;
+        } catch(\Exception $e) {
+            return response('card', 422);
+        }
+
+        try {
             if($this->request->plan == 'ppv') {
-                auth()->user()->createAsStripeCustomer($this->request->payKey);
+                auth()->user()->createAsStripeCustomer($token);
             } else {
-                $token = auth()->user()->stripe_id? null : $this->request->payKey;
                 auth()->user()->newSubscription('main', $this->request->plan)->create($token);
             }
 
             return response('/settings/invoices', 200);
 
         } catch(\Exception $e) {
-            return response(auth()->user()->tokens()->first()->id, 422);
+            return response('pay', 422);
         }
     }
 
