@@ -50,12 +50,10 @@ class PaymentController extends Controller
         return response('You are now a subscriber.', 200);
     }
 
-    public function changePlan(User $user)
+    public function changePlan()
     {
-    	$this->checkToken($user);
-
         try {
-            $user->subscription('main')->swap($this->request->plan);
+            auth()->user()->subscription('main')->swap($this->request->plan);
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
         }

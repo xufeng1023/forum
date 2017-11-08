@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\{User, Mail\ThankYouPayment};
-use Illuminate\Http\Request;
 use Laravel\Cashier\Http\Controllers\WebhookController as CashierController;
 
 class WebhookController extends CashierController
 {
-    public function handleInvoicePaymentSucceeded(Request $request)
+    public function handleChargeSucceeded(array $request)
     {
-        $data = $request->all()['data']['object'];
+        $data = $request['data']['object'];
+        return 'ss';
         //$user = User::Where('stripe_id', $data['customer'])->first();
         $user = User::first();
         \Mail::to($user)->send(new ThankYouPayment);
