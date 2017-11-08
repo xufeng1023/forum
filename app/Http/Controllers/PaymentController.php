@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
 use Stripe\{Stripe,Token,Subscription};
 use Illuminate\Http\Request;
 
@@ -40,14 +39,12 @@ class PaymentController extends Controller
         }
     }
 
-    public function ppv(User $user)
+    public function ppv()
     {
-        $this->checkToken($user);
-
         try {
-            $user->invoiceFor('One Time Charge', 149);
+            auth()->user()->invoiceFor('One Time Charge', 149);
         } catch(\Exception $e) {
-            return response($user->id, 422);
+            return response('failed', 422);
         }
 
         return response('You are now a subscriber.', 200);
@@ -66,13 +63,11 @@ class PaymentController extends Controller
         return response('Your plan has been changed!', 200);
     }
 
-    public function resume(User $user)
+    public function resume()
     {
-        $this->checkToken($user);
-        
-        if ($user->subscription('main')->onGracePeriod()) {
+        if (auth()->user()->subscription('main')->onGracePeriod()) {
             try {
-                $user->subscription('main')->resume();
+                auth()->user()->subscription('main')->resume();
             } catch(\Exception $e) {
                 return response($e->getMessage(), 422);
             }
@@ -82,12 +77,10 @@ class PaymentController extends Controller
         return response('Your subscription has ended, it can\'t be resumed!', 422);
     }
 
-    public function cancel(User $user)
+    public function cancel()
     {	
-        $this->checkToken($user);
-
         try {
-            $user->subscription('main')->cancel();
+            auth()->user()->subscription('main')->cancel();
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
         }
@@ -95,13 +88,11 @@ class PaymentController extends Controller
         return response('Your subscription has been canceled!', 200);
     }
 
-    public function updateCard(User $user)
+    public function updateCard()
     {
-        $this->checkToken($user);
-
         try {
             $token = $this->token();
-            $user->updateCard($token->id);
+            auth()->user()->updateCard($token->id);
         } catch(\Exception $e) {
             return response($e->getMessage(), 422);
         }
@@ -109,14 +100,12 @@ class PaymentController extends Controller
         return response('Your credit card has been updated!', 200);
     }
 
-    public function invoices(User $user)
+    public function invoices()
     {
-        $this->checkToken($user);
-
         try {
-            $invoices = $user->invoices();
+            $invoices = auth()->user()->invoices();
             foreach($invoices as $key => $invoice) {
-                $json[$key]['date'] = $invoice->date()->toFormattedDateString();
+                $json[$key]['date'] = $invoice->date()->format('Y-m-d');
                 $json[$key]['total'] = $invoice->total();
                 $json[$key]['id'] = $invoice->id;
             }
@@ -127,12 +116,10 @@ class PaymentController extends Controller
         return isset($json)? $json : '';
     }
 
-    public function invoice(User $user)
+    public function invoice()
     {
-        $this->checkToken($user);
-
         try {
-            return $user->downloadInvoice($this->request->invoiceId, [
+            return auth()->user()->downloadInvoice($this->request->invoiceId, [
                 'vendor'  => 'DollyIsland',
                 'product' => 'Membership',
             ]);
