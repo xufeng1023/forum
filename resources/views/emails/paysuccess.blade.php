@@ -4,8 +4,6 @@
 ${{ $price }}
 @endcomponent
 
-Thank you for your payment!
+感谢您对DollyIsland的支持, 每天都会有新影片上传哟!
 
-Thanks,<br>
-{{ env('MAIL_HEADER') }}
 @endcomponent

@@ -30,6 +30,7 @@ class ThankYouPayment extends Mailable
      */
     public function build()
     {
-        return $this->markdown('emails.paysuccess');
+        return $this->subject('Thank You!')
+                ->markdown('emails.paysuccess');
     }
 }
