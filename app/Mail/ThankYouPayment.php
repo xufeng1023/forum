@@ -11,14 +11,16 @@ class ThankYouPayment extends Mailable
 {
     use Queueable, SerializesModels;
 
+    public $price;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($price)
     {
-        //
+        $this->price = $price;
     }
 
     /**
@@ -28,6 +30,6 @@ class ThankYouPayment extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.paysuccess');
+        return $this->markdown('emails.paysuccess');
     }
 }
