@@ -39,10 +39,11 @@ class PaymentController extends Controller
         }
     }
 
-    public function ppv()
+    public function ppv(\App\Post $post)
     {
+        $price = $post->sd? 345 : 135;
         try {
-            auth()->user()->invoiceFor('One Time Charge', 149);
+            auth()->user()->invoiceFor('One Time Charge', $price);
         } catch(\Exception $e) {
             return response('failed', 422);
         }

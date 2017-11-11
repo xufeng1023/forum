@@ -6,6 +6,6 @@ Route::post('/changePlan', 'PaymentController@changePlan');
 Route::post('/cancel', 'PaymentController@cancel');
 Route::post('/resume', 'PaymentController@resume');
 Route::post('/token', 'PaymentController@getToken');
-Route::post('/ppv', 'PaymentController@ppv');
+Route::post('/ppv/{post}', 'PaymentController@ppv');
 Route::get('/invoices', 'PaymentController@invoices');
 Route::get('/invoice', 'PaymentController@invoice');
