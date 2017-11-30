@@ -15,10 +15,13 @@ class ConvertController extends Controller
 
     public function convert(Request $request)
     {
-    	$name = time().'.gif';
+       // $size = '270x480';
+    	$name = str_random(10).'.gif';
     	$path = "../storage/app/public/{$name}";
 
-    	$process = new Process("ffmpeg -i {$request->video} -s 270x360 -r 8 {$path} -hide_banner");
+       // if($request->ratio == '3/4' || $request->ratio == '4/3') $size = '270x360';
+
+    	$process = new Process("ffmpeg -i {$request->video} -s 240x320 -r 5 {$path} -hide_banner");
 		$process->run();
 
 		if (!$process->isSuccessful()) {

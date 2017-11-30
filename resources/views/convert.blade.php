@@ -28,7 +28,8 @@
       <div class="jumbotron">
             <form method="post" action="/convert" enctype="multipart/form-data">
                 {{ csrf_field() }}
-                <input type="file" accept="video/*" name="video">
+                <input type="file" accept="video/*" name="video" id="video">
+                <input type="text" name="ratio" id="ratio" hidden>
                 <button type="submit">submit</button>
             </form>
             @if(session()->has('gif'))
@@ -40,4 +41,35 @@
       @include('footer')
 
     </div>
+@endsection
+
+@section('script')
+  <script>
+    $(function() {
+        $("#video").change(function (e) {
+            if (this.files[0]) {
+                var vd = document.createElement('video');
+                vd.onprogress = function () {
+                    var width = this.videoWidth;
+                    var height = this.videoHeight;
+                    while((width % 2 === 0) && (height % 2 === 0)) {
+                        width = width / 2;
+                        height = height / 2;
+                    }
+                    while((width % 5 === 0) && (height % 5 === 0)) {
+                        width = width / 5;
+                        height = height / 5;
+                    }
+                    while((width % 3 === 0) && (height % 3 === 0)) {
+                        width = width / 3;
+                        height = height / 3;
+                    }
+                    $('#ratio').val(width + '/' + height);
+                }
+                vd.src = (window.URL || window.webkitURL).createObjectURL(this.files[0]);
+                vd.remove();
+            }
+        });
+    });
+  </script>
 @endsection
