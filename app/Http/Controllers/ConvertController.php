@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Symfony\Component\Process\Process;
+use FFMpeg\FFProbe;
 use Symfony\Component\Process\Exception\ProcessFailedException;
 
 class ConvertController extends Controller
@@ -15,19 +16,32 @@ class ConvertController extends Controller
 
     public function convert(Request $request)
     {
+       // dd($_SERVER);
        // $size = '270x480';
     	$name = str_random(10).'.gif';
+        $width = 180;
     	$path = "../storage/app/public/{$name}";
 
-       // if($request->ratio == '3/4' || $request->ratio == '4/3') $size = '270x360';
+        $ffprobe = FFProbe::create();
+        $dimension = $ffprobe
+            ->streams($request->video) // extracts streams informations
+            ->videos()                      // filters video streams
+            ->first()                       // returns the first video stream
+            ->getDimensions();
 
-    	$process = new Process("ffmpeg -i {$request->video} -s 240x320 -r 5 {$path} -hide_banner");
+        $height = (int)($width / ($dimension->getHeight() / $dimension->getWidth()));
+        $wh = $width.'X'.$height;
+    	$process = new Process("ffmpeg -i {$request->video} -s $wh -r 7 {$path} -hide_banner");
 		$process->run();
 
 		if (!$process->isSuccessful()) {
 		    throw new ProcessFailedException($process);
 		}
-
-		return back()->with('gif', $name);
+        // return [
+        //     'url' => asset('storage/'.$name),
+        //     'size' => \Storage::disk('public')->size($name)
+        // ];
+        $size = \Storage::disk('public')->size($name);
+		return back()->with('gif', $name)->with('size', round($size / 1024 / 1024, 2).'M');
     }
 }
